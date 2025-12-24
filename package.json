@@ -32,49 +32,38 @@
     "electron-builder": "^26.0.12",
     "prettier": "^3.3.3"
   },
-  "build": {
-    "productName": "A5 PII Anonymizer",
-    "appId": "com.a5.piiAnonymizer",
-    "asar": true,
-    "asarUnpack": [
-      "**/*.{node,dylib,dll,exe}"
-    ],
-    "mac": {
-      "icon": "assets/icon",
-      "category": "public.app-category.utilities"
-    },
-    "win": {
-      "icon": "assets/icon",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        }
-      ]
-    },
-    "directories": {
-      "buildResources": "assets"
-    },
-    "files": [
-      "**/*",
-      "!dist{,/**/*}",
-      "!test{,/**/*}",
-      "!scripts{,/**/*}",
-      "!.prettierignore",
-      "!node_modules/@napi-rs/canvas-android-arm64{,/**/*}",
-      "!node_modules/@napi-rs/canvas-darwin-arm64{,/**/*}",
-      "!node_modules/@napi-rs/canvas-darwin-x64{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-arm-gnueabihf{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-arm64-gnu{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-arm64-musl{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-riscv64-gnu{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-x64-gnu{,/**/*}",
-      "!node_modules/@napi-rs/canvas-linux-x64-musl{,/**/*}"
-    ]
-  },
   "overrides": {
     "glob": "^10.3.10",
     "rimraf": "^4.4.1"
+    },
+    "build": {
+      "appId": "com.a5.piiAnonymizer",
+      "productName": "A5 PII Anonymizer",
+      "asar": false,
+      "directories": {
+        "output": "dist"
+      },
+      "files": [
+        "**/*",
+        "!dist",
+        "!test",
+        "!scripts",
+        "!build-scripts",
+        "!.prettierignore",
+        "!.gitignore",
+        "!README.md",
+        "!LICENSE"
+      ],
+      "win": {
+        "target": ["nsis"],
+        "icon": "assets/icon"
+      },
+      "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true
+      }
   },
   "prettier": {
     "semi": true,
