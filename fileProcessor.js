@@ -3,7 +3,9 @@ import path from 'path';
 import ExcelJS from 'exceljs';
 import mammoth from 'mammoth';
 import { Document, Packer, Paragraph } from 'docx';
-import pdfParse from 'pdf-parse';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
 import { PDFDocument } from 'pdf-lib';
 
 import { pipeline, env } from '@xenova/transformers';
@@ -122,15 +124,18 @@ function buildFuzzyRegex(mergedString) {
  */
 async function loadNERModel() {
   if (!nerPipeline) {
-    console.log("Loading PII detection model from local files...");
-    nerPipeline = await pipeline('token-classification', 'protectai/lakshyakh93-deberta_finetuned_pii-onnx');
-    console.log("Model loaded.");
+    console.log('Loading PII detection model from local files...');
+    nerPipeline = await pipeline(
+      'token-classification',
+      'protectai/lakshyakh93-deberta_finetuned_pii-onnx'
+    );
+    console.log('Model loaded.');
   }
   return nerPipeline;
 }
 
 /**
- * The main anonymization function. 
+ * The main anonymization function.
  * 1) Runs the pipeline
  * 2) Merges partial tokens
  * 3) Uses a fuzzy global regex to replace each merged token with a pseudonym
@@ -139,12 +144,12 @@ async function anonymizeText(text) {
   let processedText = String(text);
 
   const ner = await loadNERModel();
-  console.log("Internal LLM processing...");
+  console.log('Internal LLM processing...');
   const predictions = await ner(processedText);
-  console.log("Raw predicted tokens:", predictions);
+  console.log('Raw predicted tokens:', predictions);
 
   const merged = aggressiveMergeTokens(predictions);
-  console.log("Aggressively merged tokens:", merged);
+  console.log('Aggressively merged tokens:', merged);
 
   for (const obj of merged) {
     const entityType = obj.type;
@@ -158,13 +163,15 @@ async function anonymizeText(text) {
       continue;
     }
 
-    console.log(`Replacing fuzzy match of "${mergedString}" => regex ${fuzzyRegex} with "${pseudonym}"`);
+    console.log(
+      `Replacing fuzzy match of "${mergedString}" => regex ${fuzzyRegex} with "${pseudonym}"`
+    );
 
     // Single-pass global replace
     processedText = processedText.replace(fuzzyRegex, pseudonym);
   }
 
-  console.log("LLM processing complete.");
+  console.log('LLM processing complete.');
   return processedText;
 }
 
@@ -181,17 +188,16 @@ export class FileProcessor {
           const content = fs.readFileSync(filePath, 'utf8');
           let newContent;
           if (useLLM) {
-            console.log("LLM anonymization enabled. Processing text...");
+            console.log('LLM anonymization enabled. Processing text...');
             const anonymizedText = await anonymizeText(content);
-            newContent = "Anonymized\n\n" + anonymizedText;
+            newContent = 'Anonymized\n\n' + anonymizedText;
           } else {
-            console.log("LLM anonymization disabled. Using default processing.");
-            newContent = "Anonymized\n\n" + content;
+            console.log('LLM anonymization disabled. Using default processing.');
+            newContent = 'Anonymized\n\n' + content;
           }
           fs.writeFileSync(outputPath, newContent, 'utf8');
           console.log(`Text file processed and saved to: ${outputPath}`);
           resolve(true);
-
         } else if (ext === '.xlsx') {
           // Excel partial coverage
           console.log(`Processing Excel file: ${filePath}`);
@@ -214,12 +220,11 @@ export class FileProcessor {
           await workbook.xlsx.writeFile(outputPath);
           console.log(`Excel file processed and saved to: ${outputPath}`);
           resolve(true);
-
         } else if (ext === '.docx') {
           // DOCX: mammoth + docx approach
           console.log(`Processing DOCX file: ${filePath}`);
           const { value: docxText } = await mammoth.extractRawText({ path: filePath });
-          console.log("Extracted DOCX text:", docxText);
+          console.log('Extracted DOCX text:', docxText);
 
           let anonymizedDocxText = docxText;
           if (useLLM) {
@@ -230,7 +235,7 @@ export class FileProcessor {
           const doc = new Document({
             sections: [
               {
-                children: [ new Paragraph(anonymizedDocxText) ],
+                children: [new Paragraph(anonymizedDocxText)],
               },
             ],
           });
@@ -238,14 +243,13 @@ export class FileProcessor {
           fs.writeFileSync(outputPath, buffer);
           console.log(`DOCX file processed and saved to: ${outputPath}`);
           resolve(true);
-
         } else if (ext === '.pdf') {
           // PDF: pdf-parse + pdf-lib approach
           console.log(`Processing PDF file: ${filePath}`);
           const dataBuffer = fs.readFileSync(filePath);
           const data = await pdfParse(dataBuffer);
           const pdfText = data.text;
-          console.log("Extracted PDF text:", pdfText);
+          console.log('Extracted PDF text:', pdfText);
 
           let anonymizedPdfText = pdfText;
           if (useLLM) {
@@ -260,7 +264,6 @@ export class FileProcessor {
           fs.writeFileSync(outputPath, pdfBytes);
           console.log(`PDF file processed and saved to: ${outputPath}`);
           resolve(true);
-
         } else {
           // For other file types, just copy
           console.log(`Processing binary file: ${filePath}`);
@@ -269,7 +272,7 @@ export class FileProcessor {
           resolve(true);
         }
       } catch (error) {
-        console.error("Error in processFile:", error);
+        console.error('Error in processFile:', error);
         reject(error);
       }
     });
@@ -282,9 +285,7 @@ export class FileProcessor {
   }
 
   static validateFileType(filePath) {
-    const supportedTypes = [
-      '.doc', '.docx', '.xls', '.xlsx', '.csv', '.pdf', '.txt'
-    ];
+    const supportedTypes = ['.doc', '.docx', '.xls', '.xlsx', '.csv', '.pdf', '.txt'];
     const ext = path.extname(filePath).toLowerCase();
     return supportedTypes.includes(ext);
   }

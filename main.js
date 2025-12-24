@@ -77,7 +77,7 @@ ipcMain.handle('process-file', async (event, { filePath, outputDir }) => {
 
     // If LLM not yet loaded, notify the renderer
     if (!isLLMInitialized) {
-      mainWindow.webContents.send('log-message', "Initializing LLM (first-time load)...");
+      mainWindow.webContents.send('log-message', 'Initializing LLM (first-time load)...');
     }
 
     mainWindow.webContents.send('log-message', `Processing: ${fileName}`);
@@ -94,7 +94,7 @@ ipcMain.handle('process-file', async (event, { filePath, outputDir }) => {
     mainWindow.webContents.send('log-message', `Finished: ${fileName}`);
     return { success: true, outputPath };
   } catch (error) {
-    console.error("Error in process-file IPC:", error);
+    console.error('Error in process-file IPC:', error);
     mainWindow.webContents.send('log-message', `Error: ${error.message}`);
     return { success: false, error: error.message };
   }

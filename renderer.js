@@ -9,9 +9,9 @@ let userState = {
   deviceID: null,
   isPro: false,
   dailyCount: 0,
-  dailyDate: null
+  dailyDate: null,
 };
-let autoUpdate= false;
+let autoUpdate = false;
 
 // Simple hash for your local testing
 function simpleHash(str) {
@@ -92,7 +92,7 @@ function loadUserState() {
       deviceID: null,
       isPro: false,
       dailyCount: 0,
-      dailyDate: null
+      dailyDate: null,
     };
   }
   if (!userState.deviceID) {
@@ -126,7 +126,7 @@ function checkDailyReset() {
 
 function getLocalDateString() {
   const now = new Date();
-  return now.toLocaleDateString('en-CA'); 
+  return now.toLocaleDateString('en-CA');
 }
 
 loadUserState();
@@ -136,7 +136,7 @@ dropZone.addEventListener('click', () => {
   const now = Date.now();
   if (now - lastDialogTime < 1000) return;
   lastDialogTime = now;
-  fileInput.value = "";
+  fileInput.value = '';
   fileInput.click();
 });
 
@@ -193,7 +193,10 @@ async function processFiles() {
   if (!userState.isPro) {
     checkDailyReset();
     if (userState.dailyCount >= 100) {
-      showStatus(`You've reached your 100-file daily limit. Upgrade to Pro or wait until midnight for a limit reset.`, 'error');
+      showStatus(
+        `You've reached your 100-file daily limit. Upgrade to Pro or wait until midnight for a limit reset.`,
+        'error'
+      );
       return;
     }
   }
@@ -218,7 +221,7 @@ async function processFiles() {
     const file = selectedFiles[i];
     const result = await ipcRenderer.invoke('process-file', {
       filePath: file.path,
-      outputDir: outputDirectory
+      outputDir: outputDirectory,
     });
     if (!result.success) {
       showStatus(`Error processing ${file.name}: ${result.error}`, 'error');
@@ -310,7 +313,7 @@ function getFilesFromDirectory(dirPath) {
         results = results.concat(getFilesFromDirectory(filePath));
       } else {
         const ext = path.extname(file).toLowerCase();
-        if (['.doc','.docx','.xls','.xlsx','.csv','.pdf','.txt'].includes(ext)) {
+        if (['.doc', '.docx', '.xls', '.xlsx', '.csv', '.pdf', '.txt'].includes(ext)) {
           results.push({ path: filePath, name: file });
         }
       }
@@ -323,7 +326,7 @@ function getFilesFromDirectory(dirPath) {
 
 function addFile(fileObj) {
   const ext = path.extname(fileObj.path).toLowerCase();
-  if (['.doc','.docx','.xls','.xlsx','.csv','.pdf','.txt'].includes(ext)) {
+  if (['.doc', '.docx', '.xls', '.xlsx', '.csv', '.pdf', '.txt'].includes(ext)) {
     if (!selectedFiles.find((f) => f.path === fileObj.path)) {
       selectedFiles.push(fileObj);
     }
@@ -339,7 +342,7 @@ function updateFileListUI() {
     return;
   }
   fileListDiv.classList.remove('hidden');
-  selectedFiles.forEach(file => {
+  selectedFiles.forEach((file) => {
     const li = document.createElement('li');
     li.textContent = file.name;
     filesUl.appendChild(li);
@@ -347,7 +350,7 @@ function updateFileListUI() {
 }
 
 function updateProcessButton() {
-  processButton.disabled = (selectedFiles.length === 0);
+  processButton.disabled = selectedFiles.length === 0;
 }
 
 function clearState() {
@@ -369,8 +372,6 @@ ipcRenderer.on('log-message', (event, msg) => {
   logArea.classList.remove('hidden');
   logMessages.textContent = `Status: ${msg}`;
 });
-
-
 
 // PRO Upgrade UI & Logic
 proButton.addEventListener('click', () => {
@@ -437,7 +438,7 @@ infoClose.addEventListener('click', hideInfoModal);
 function validateProKey(key) {
   // e.g. "MASTERTESTKEY" or check simpleHash(userState.deviceID)
   // Return true if matches
-  return (key === 'MASTERTESTKEY');
+  return key === 'MASTERTESTKEY';
 }
 
 function showUpgradeModal() {
