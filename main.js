@@ -21,9 +21,9 @@ function createWindow() {
     },
     backgroundColor: '#1a1a1a',
   });
-  // mainWindow.webContents.openDevTools(); // uncomment if you want the console
+  // mainWindow.webContents.openDevTools();
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
 
 app.whenReady().then(() => {
