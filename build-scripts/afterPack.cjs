@@ -38,7 +38,6 @@ exports.default = async function(context) {
     }
     
     // Copy directories using a simpler method
-    const cpSync = fs.cpSync || fs.copyFileSync; // Node 16+ has cpSync
     
     const dirs = ['assets', 'models', 'webfonts', 'node_modules'];
     for (const dir of dirs) {
