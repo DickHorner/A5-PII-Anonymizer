@@ -11,7 +11,6 @@ let userState = {
   dailyCount: 0,
   dailyDate: null,
 };
-let autoUpdate = false;
 
 // Simple hash for your local testing
 function simpleHash(str) {
