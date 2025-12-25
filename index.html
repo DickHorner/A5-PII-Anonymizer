@@ -1,6 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A5 PII Anonymizer</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="all.min.css" />
@@ -26,12 +28,13 @@
       <div id="drop-zone" class="drop-zone">
         <i class="fas fa-file-upload"></i>
         <p>Drag & Drop files here or click to select</p>
+        <label for="file-input" class="sr-only">Select files to anonymize</label>
         <input
           type="file"
           id="file-input"
           accept=".doc,.docx,.xls,.xlsx,.csv,.pdf,.txt"
           multiple
-          style="display: none"
+          class="file-input-hidden"
         />
       </div>
 
@@ -108,6 +111,7 @@
         </div>
 
         <h3>Already have a key?</h3>
+        <label for="pro-key-input" class="sr-only">Enter your Pro key</label>
         <input type="text" id="pro-key-input" placeholder="Enter Pro Key" class="pro-key-input" />
         <button id="validate-key-button" class="button white-border-btn">Validate Key</button>
 
@@ -139,7 +143,7 @@
         <h2>Manage Plan</h2>
         <p>You are currently on the Pro plan.</p>
         <button id="downgrade-btn" class="button error-btn">Downgrade to Free</button>
-        <p style="margin-top: 10px">
+        <p class="manage-info">
           <span class="store-link" id="manage-store-link">Visit store</span> for more info.
         </p>
       </div>
